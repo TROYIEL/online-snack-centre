@@ -48,11 +48,11 @@ export function Header() {
             </div>
           </form>
 
-          <Link href="/account">
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-            </Button>
-          </Link>
+        <nav className="hidden items-center gap-6 md:flex">
+            <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
+             
+            </Link>
+          </nav>
 
           <Sheet>
             <SheetTrigger asChild className="md:hidden">

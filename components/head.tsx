@@ -54,13 +54,6 @@ export function Head() {
               <User className="h-5 w-5" />
             </Button>
           </Link>
-
-          <Link href="/admin">
-  <Button variant="ghost" size="icon">
-    <Shield className="h-5 w-5" />
-  </Button>
-</Link>
-
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
