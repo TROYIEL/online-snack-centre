@@ -55,7 +55,7 @@ export function Head() {
             </Button>
           </Link>
 
-          <Link href="/checkout">
+          <Link href="/admin">
   <Button variant="ghost" size="icon">
     <Shield className="h-5 w-5" />
   </Button>

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Bugema Campus Delivery",
+  title: "ONLINE SNACK CENTRE",
   description: "Fast and reliable delivery service for Bugema University campus",
     generator: 'v0.app'
 }
