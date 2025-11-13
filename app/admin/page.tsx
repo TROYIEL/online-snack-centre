@@ -141,12 +141,6 @@ export default function AdminDashboard() {
         {/* Overview Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard title="Total Orders" value={stats.totalOrders} icon={<Package className="text-indigo-600" />} />
-          <StatCard title="Customers" value={stats.totalCustomers} icon={<Users className="text-pink-600" />} />
-          <StatCard
-            title="Total Revenue"
-            value={`$${stats.totalRevenue.toFixed(2)}`}
-            icon={<DollarSign className="text-green-600" />}
-          />
           <StatCard
             title="Active Deliveries"
             value={stats.activeDeliveries}
