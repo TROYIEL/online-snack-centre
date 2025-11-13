@@ -33,10 +33,7 @@ export default function AdminDeliveriesPage() {
 
       const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-      if (!profile || profile.role !== "admin") {
-        router.push("/")
-        return
-      }
+    
 
       const { data, error } = await supabase
         .from("deliveries")

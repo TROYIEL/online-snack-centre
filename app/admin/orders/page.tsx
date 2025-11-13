@@ -29,10 +29,7 @@ export default function AdminOrdersPage() {
 
       const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-      if (!profile || profile.role !== "admin") {
-        router.push("/")
-        return
-      }
+    
 
       const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false })
 

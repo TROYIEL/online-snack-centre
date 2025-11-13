@@ -40,15 +40,6 @@ export default function AdminDashboard() {
       setUser(user)
 
       // Check admin role
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single()
-
-      if (profile?.role !== "admin") {
-        return router.push("/")
-      }
 
       // Fetch sample stats
       const [{ count: totalOrders }, { data: customers }, { data: orders }, { count: activeDeliveries }] =
@@ -109,7 +100,7 @@ export default function AdminDashboard() {
               { label: "Orders", href: "/admin/orders", icon: Package },
               { label: "Products", href: "/admin/products", icon: DollarSign },
               { label: "Deliveries", href: "/admin/deliveries", icon: Truck },
-              { label: "Users", href: "/admin/users", icon: Users },
+            
             ].map(({ label, href, icon: Icon }) => (
               <Link
                 key={href}
@@ -124,9 +115,11 @@ export default function AdminDashboard() {
         </div>
 
         <div className="p-4 border-t">
-          <Button variant="ghost" className="w-full justify-start text-gray-600 hover:text-red-600">
-            <LogOut className="mr-2 h-4 w-4" /> {sidebarOpen && "Logout"}
-          </Button>
+          <Button asChild className="w-full">
+            <Link href="/">
+           Logout
+  </Link>
+</Button>
         </div>
       </aside>
 
@@ -167,7 +160,7 @@ export default function AdminDashboard() {
             { label: "Manage Orders", href: "/admin/orders", icon: Package },
             { label: "Manage Products", href: "/admin/products", icon: Settings },
             { label: "Deliveries", href: "/admin/deliveries", icon: Truck },
-            { label: "Users", href: "/admin/users", icon: Users },
+            
           ].map(({ label, href, icon: Icon }) => (
             <Link key={href} href={href}>
               <Card className="hover:shadow-lg hover:-translate-y-1 transition-all bg-white/70 backdrop-blur">

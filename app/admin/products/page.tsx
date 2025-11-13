@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast"
 import { Loader2, Plus } from "lucide-react"
 import Image from "next/image"
 import type { Product } from "@/lib/types/database"
+// 1. Import the new server action
+import { revalidateProductsPage } from "./actions" // Adjust path as needed
 
 export default function AdminProductsPage() {
   const router = useRouter()
@@ -31,36 +33,7 @@ export default function AdminProductsPage() {
   const [stockQuantity, setStockQuantity] = useState("")
   const [imageUrl, setImageUrl] = useState("")
 
-  useEffect(() => {
-    const checkAdminAndFetchProducts = async () => {
-      const supabase = createClient()
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) {
-        router.push("/auth/login")
-        return
-      }
-
-      const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-
-      if (!profile || profile.role !== "admin") {
-        router.push("/")
-        return
-      }
-
-      const { data, error } = await supabase.from("products").select("*").order("created_at", { ascending: false })
-
-      if (!error && data) {
-        setProducts(data)
-      }
-
-      setIsLoading(false)
-    }
-
-    checkAdminAndFetchProducts()
-  }, [router])
+  // ... (useEffect for auth and initial fetch remains the same)
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -85,7 +58,12 @@ export default function AdminProductsPage() {
         description: `${name} has been added to the catalog.`,
       })
 
-      // Refresh products
+      // *****************************************
+      // 2. Call the server action to revalidate the main products page cache
+      await revalidateProductsPage()
+      // *****************************************
+
+      // Refresh products for the *Admin* page view (Client-side)
       const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false })
 
       if (data) {
@@ -109,6 +87,9 @@ export default function AdminProductsPage() {
       setIsSubmitting(false)
     }
   }
+
+  // ... (rest of the component remains the same)
+
 
   if (isLoading) {
     return (

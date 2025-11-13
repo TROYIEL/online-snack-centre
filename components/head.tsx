@@ -54,6 +54,13 @@ export function Head() {
               <User className="h-5 w-5" />
             </Button>
           </Link>
+
+     <nav className="flex flex-col gap-4">
+                <Link href="/admin/sup" className="text-sm font-medium">
+                  DASHBOARD
+                </Link>
+              </nav>
+          
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
