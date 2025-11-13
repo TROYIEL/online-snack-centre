@@ -99,7 +99,7 @@ export default function AdminDashboard() {
               { label: "Dashboard", href: "/admin", icon: Settings },
               { label: "Orders", href: "/admin/orders", icon: Package },
               { label: "Products", href: "/admin/products", icon: DollarSign },
-              { label: "Deliveries", href: "/admin/deliveries", icon: Truck },
+             
             
             ].map(({ label, href, icon: Icon }) => (
               <Link
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
           {[
             { label: "Manage Orders", href: "/admin/orders", icon: Package },
             { label: "Manage Products", href: "/admin/products", icon: Settings },
-            { label: "Deliveries", href: "/admin/deliveries", icon: Truck },
+            
             
           ].map(({ label, href, icon: Icon }) => (
             <Link key={href} href={href}>

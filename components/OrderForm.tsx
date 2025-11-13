@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
-export default function OrderForm({ total }: { total: number }) {
+export default function OrderForm() {
   const supabase = createClient();
   const router = useRouter();
 
@@ -13,6 +13,7 @@ export default function OrderForm({ total }: { total: number }) {
   const [location, setLocation] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [mobileNumber, setMobileNumber] = useState("");
+  const [total, setTotal] = useState<number | "">("");
 
   const handleConfirmOrder = async () => {
     if (!location.trim() || !paymentMethod) {
@@ -20,7 +21,15 @@ export default function OrderForm({ total }: { total: number }) {
       return;
     }
 
-    if ((paymentMethod === "airtel_money" || paymentMethod === "mtn_money") && !mobileNumber.trim()) {
+    if (!total || isNaN(Number(total))) {
+      alert("Please enter a valid total amount.");
+      return;
+    }
+
+    if (
+      (paymentMethod === "airtel_money" || paymentMethod === "mtn_money") &&
+      !mobileNumber.trim()
+    ) {
       alert("Please enter your mobile money number.");
       return;
     }
@@ -29,7 +38,10 @@ export default function OrderForm({ total }: { total: number }) {
 
     try {
       // ✅ Get logged-in user
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
       if (userError || !user) {
         alert("You must be logged in to place an order.");
         router.push("/auth/login");
@@ -40,7 +52,7 @@ export default function OrderForm({ total }: { total: number }) {
       const newOrder = {
         user_id: user.id,
         order_number: `ORD-${Math.floor(Math.random() * 90000) + 10000}`,
-        total: total * quantity,
+        total: Number(total) * quantity,
         payment_method: paymentMethod,
         payment_status: "pending",
         status: "pending",
@@ -50,7 +62,10 @@ export default function OrderForm({ total }: { total: number }) {
       };
 
       // ✅ Insert into Supabase
-      const { error: insertError } = await supabase.from("orders").insert([newOrder]);
+      const { error: insertError } = await supabase
+        .from("orders")
+        .insert([newOrder]);
+
       if (insertError) {
         console.error("Error saving order:", insertError.message);
         alert("Failed to place order. Please try again.");
@@ -64,7 +79,9 @@ export default function OrderForm({ total }: { total: number }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             phoneNumber: mobileNumber,
-            message: `Hello! Your order ${newOrder.order_number} of UGX ${(total * quantity).toLocaleString()} has been received. We’ll confirm shortly.`,
+            message: `Hello! Your order ${newOrder.order_number} of UGX ${(Number(
+              total
+            ) * quantity).toLocaleString()} has been received. We’ll confirm shortly.`,
           }),
         });
 
@@ -79,6 +96,7 @@ export default function OrderForm({ total }: { total: number }) {
       router.push("/orders");
     } catch (err) {
       console.error("Error placing order:", err);
+      alert("An error occurred while placing the order.");
     } finally {
       setLoading(false);
     }
@@ -89,15 +107,33 @@ export default function OrderForm({ total }: { total: number }) {
     setLocation("");
     setQuantity(1);
     setMobileNumber("");
+    setTotal("");
   };
 
   return (
     <div className="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6 space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Checkout</h2>
 
+      {/* Total Input */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Total Amount (UGX)
+        </label>
+        <input
+          type="number"
+          min={1000}
+          value={total}
+          onChange={(e) => setTotal(e.target.value === "" ? "" : Number(e.target.value))}
+          placeholder="Enter total amount"
+          className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+        />
+      </div>
+
       {/* Location Input */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Location</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Delivery Location
+        </label>
         <input
           type="text"
           value={location}
@@ -109,7 +145,9 @@ export default function OrderForm({ total }: { total: number }) {
 
       {/* Quantity */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Quantity
+        </label>
         <input
           type="number"
           min={1}
@@ -121,13 +159,17 @@ export default function OrderForm({ total }: { total: number }) {
 
       {/* Payment Method */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Payment Method
+        </label>
         <div className="flex flex-col gap-2">
           {["airtel_money", "mtn_money", "cash_on_delivery"].map((method) => (
             <label
               key={method}
               className={`flex items-center gap-3 border rounded-lg px-4 py-2 cursor-pointer transition ${
-                paymentMethod === method ? "border-indigo-600 bg-indigo-50" : "border-gray-300"
+                paymentMethod === method
+                  ? "border-indigo-600 bg-indigo-50"
+                  : "border-gray-300"
               }`}
             >
               <input
@@ -147,7 +189,9 @@ export default function OrderForm({ total }: { total: number }) {
       {/* Mobile Number (only for Airtel or MTN) */}
       {(paymentMethod === "airtel_money" || paymentMethod === "mtn_money") && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Money Number</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Mobile Money Number
+          </label>
           <input
             type="tel"
             placeholder="e.g. 0771234567"
